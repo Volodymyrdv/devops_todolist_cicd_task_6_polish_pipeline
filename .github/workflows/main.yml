@@ -13,10 +13,12 @@ on:
         description: 'Os to use in Python CI'
         required: true
         type: choice
+        default: ubuntu-latest
         options: [ubuntu-latest, windows-latest]
       pythonVersion:
         description: 'Python version to use'
         required: true
+        default: '3.8'
         type: choice
         options: ['3.8', '3.9']
 
@@ -31,10 +33,10 @@ jobs:
   python-ci:
     strategy:
       matrix:
-        PythonVersion: [3.8, 3.9]
-        OsType: [ubuntu-latest, windows-latest]
+        pythonVersion: [3.8, 3.9]
+        osType: [ubuntu-latest, windows-latest]
     name: Python CI
-    runs-on: ${{matrix.OsType}}
+    runs-on: ${{matrix.osType}}
     defaults:
       run:
         working-directory: ./src
@@ -42,10 +44,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.PythonVersion }}
+      - name: Set up Python ${{ matrix.pythonVersion }}
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.PythonVersion }}
+          python-version: ${{ matrix.pythonVersion }}
 
       - name: Install dependencies
         run: |
@@ -72,20 +74,20 @@ jobs:
 
       - name: Upload python artifacts
         uses: actions/upload-artifact@v4
-        if: matrix.OsType == 'ubuntu-latest' && matrix.PythonVersion == 3.8
+        if: matrix.osType == github.event.inputs.osType && matrix.pythonVersion == github.event.inputs.pythonVersion
         with:
           name: python-artifacts
           path: .
 
       - name: Upload helm artifacts
-        if: github.ref_name == 'main' && matrix.OsType == 'ubuntu-latest' && matrix.PythonVersion == 3.8
+        if: github.ref_name == 'main' && matrix.osType == github.event.inputs.osType && matrix.pythonVersion == github.event.inputs.pythonVersion
         uses: actions/upload-artifact@v4
         with:
           name: helm-artifacts
           path: ${{ github.workspace }}/helm-charts
 
       - name: Upload kind cluster artifact
-        if: github.ref_name == 'main' && matrix.OsType == 'ubuntu-latest' && matrix.PythonVersion == 3.8
+        if: github.ref_name == 'main' && matrix.osType == github.event.inputs.osType && matrix.pythonVersion == github.event.inputs.pythonVersion
         uses: actions/upload-artifact@v4
         with:
           name: kind-cluster
