@@ -23,7 +23,6 @@ on:
         options: ['3.8', '3.9']
 
 env:
-  PythonVersion: 3.8
   DockerImageName: mate2py
 
 concurrency:
@@ -37,7 +36,7 @@ jobs:
         pythonVersion: [3.8, 3.9]
         osType: [ubuntu-latest, windows-latest]
     name: Python CI
-    runs-on: ${{matrix.OsType}}
+    runs-on: ${{matrix.osType}}
     defaults:
       run:
         working-directory: ./src
@@ -45,10 +44,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python ${{ matrix.PythonVersion }}
+      - name: Set up Python ${{ matrix.pythonVersion }}
         uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.PythonVersion }}
+          python-version: ${{ matrix.pythonVersion }}
 
       - name: Install dependencies
         run: |
@@ -75,20 +74,20 @@ jobs:
 
       - name: Upload python artifacts
         uses: actions/upload-artifact@v4
-        if: matrix.OsType == github.event.inputs.osType && '${{matrix.PythonVersion}}' == github.event.inputs.pythonVersion
+        if: matrix.osType == github.event.inputs.osType && '${{matrix.pythonVersion}}' == github.event.inputs.pythonVersion
         with:
           name: python-artifacts
           path: .
 
       - name: Upload helm artifacts
-        if: github.ref_name == 'main' && matrix.OsType == github.event.inputs.osType && '${{matrix.PythonVersion}}' == github.event.inputs.pythonVersion
+        if: github.ref_name == 'main' && matrix.osType == github.event.inputs.osType && '${{matrix.pythonVersion}}' == github.event.inputs.pythonVersion
         uses: actions/upload-artifact@v4
         with:
           name: helm-artifacts
           path: ${{ github.workspace }}/helm-charts
 
       - name: Upload kind cluster artifact
-        if: github.ref_name == 'main' && matrix.OsType == github.event.inputs.osType && '${{matrix.PythonVersion}}' == github.event.inputs.pythonVersion
+        if: github.ref_name == 'main' && matrix.osType == github.event.inputs.osType && '${{matrix.pythonVersion}}' == github.event.inputs.pythonVersion
         uses: actions/upload-artifact@v4
         with:
           name: kind-cluster
