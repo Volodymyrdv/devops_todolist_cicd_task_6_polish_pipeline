@@ -72,22 +72,23 @@ jobs:
 
       - name: Upload python artifacts
         uses: actions/upload-artifact@v4
+        if: matrix.OsType == 'ubuntu-latest' && matrix.PythonVersion == 3.8
         with:
-          name: python-artifacts-${{matrix.OsType}}-${{matrix.PythonVersion}}
+          name: python-artifacts
           path: .
 
       - name: Upload helm artifacts
-        if: github.ref_name == 'main'
+        if: github.ref_name == 'main' && matrix.OsType == 'ubuntu-latest' && matrix.PythonVersion == 3.8
         uses: actions/upload-artifact@v4
         with:
-          name: helm-artifacts-${{matrix.OsType}}-${{matrix.PythonVersion}}
+          name: helm-artifacts
           path: ${{ github.workspace }}/helm-charts
 
       - name: Upload kind cluster artifact
-        if: github.ref_name == 'main'
+        if: github.ref_name == 'main' && matrix.OsType == 'ubuntu-latest' && matrix.PythonVersion == 3.8
         uses: actions/upload-artifact@v4
         with:
-          name: kind-cluster-${{matrix.OsType}}-${{matrix.PythonVersion}}
+          name: kind-cluster
           path: ${{ github.workspace }}/cluster.yml
 
   docker-ci:
@@ -99,22 +100,7 @@ jobs:
       - uses: actions/download-artifact@v4
         name: Download python artifacts
         with:
-          name: python-artifacts-ubuntu-latest-3.8
-          path: .
-      - uses: actions/download-artifact@v4
-        name: Download python artifacts
-        with:
-          name: python-artifacts-ubuntu-latest-3.9
-          path: .
-      - uses: actions/download-artifact@v4
-        name: Download python artifacts
-        with:
-          name: python-artifacts-windows-latest-3.8
-          path: .
-      - uses: actions/download-artifact@v4
-        name: Download python artifacts
-        with:
-          name: python-artifacts-windows-latest-3.9
+          name: python-artifacts
           path: .
 
       - name: Login to Docker Hub
@@ -138,19 +124,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: helm-artifacts-ubuntu-latest-3.8
-          path: .
-      - uses: actions/download-artifact@v4
-        with:
-          name: helm-artifacts-ubuntu-latest-3.9
-          path: .
-      - uses: actions/download-artifact@v4
-        with:
-          name: helm-artifacts-windows-latest-3.8
-          path: .
-      - uses: actions/download-artifact@v4
-        with:
-          name: helm-artifacts-windows-latest-3.9
+          name: helm-artifacts
           path: .
 
       - name: Set Up Helm
