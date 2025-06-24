@@ -21,7 +21,6 @@ on:
         options: ['3.8', '3.9']
 
 env:
-  PythonVersion: 3.8
   DockerImageName: mate2py
 
 concurrency:
@@ -146,7 +145,7 @@ jobs:
           path: ./*.tgz
 
   deploy-helm-dev:
-    name: Deploy helm to Development(1.0)
+    name: Deploy helm to Development(1.1)
     uses: ./.github/workflows/reusable-deployment.yml
     needs: [helm-ci, docker-ci]
     secrets: inherit
@@ -155,7 +154,7 @@ jobs:
       version: ${{ github.sha }}
 
   deploy-helm-stg:
-    name: Deploy helm to Staging(1.0)
+    name: Deploy helm to Staging(1.1)
     uses: ./.github/workflows/reusable-deployment.yml
     needs: [deploy-helm-dev]
     secrets: inherit
