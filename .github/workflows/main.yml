@@ -72,22 +72,29 @@ jobs:
         run: |
           flake8 . --exit-zero --max-complexity=6
 
+      - name: Debug matrix and inputs
+        run: |
+          echo "matrix.osType=${{ matrix.osType }}"
+          echo "matrix.pythonVersion=${{ matrix.pythonVersion }}"
+          echo "input.osType=${{ github.event.inputs.osType }}"
+          echo "input.pythonVersion=${{ github.event.inputs.pythonVersion }}"
+
       - name: Upload python artifacts
         uses: actions/upload-artifact@v4
-        if: matrix.osType == github.event.inputs.osType && matrix.pythonVersion == github.event.inputs.pythonVersion
+        if: matrix.osType == 'ubuntu-latest' && matrix.pythonVersion == 3.8
         with:
           name: python-artifacts
           path: .
 
       - name: Upload helm artifacts
-        if: github.ref_name == 'main' && matrix.osType == github.event.inputs.osType && matrix.pythonVersion == github.event.inputs.pythonVersion
+        if: github.ref_name == 'main' && matrix.osType == 'ubuntu-latest' && matrix.pythonVersion == 3.8
         uses: actions/upload-artifact@v4
         with:
           name: helm-artifacts
           path: ${{ github.workspace }}/helm-charts
 
       - name: Upload kind cluster artifact
-        if: github.ref_name == 'main' && matrix.osType == github.event.inputs.osType && matrix.pythonVersion == github.event.inputs.pythonVersion
+        if: github.ref_name == 'main' && matrix.osType == 'ubuntu-latest' && matrix.pythonVersion == 3.8
         uses: actions/upload-artifact@v4
         with:
           name: kind-cluster
